@@ -1,0 +1,79 @@
+{
+  "expo": {
+    "name": "ORYNO",
+    "slug": "oryno-ios",
+    "version": "1.0.1",
+    "orientation": "portrait",
+    "icon": "./assets/images/oryno-app-icon.png",
+    "scheme": "oryno",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "platforms": ["ios"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.oryno.africa",
+      "buildNumber": "1",
+      "usesAppleSignIn": true,
+      "infoPlist": {
+        "UIBackgroundModes": ["remote-notification"],
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSFaceIDUsageDescription": "ORYNO uses Face ID to sign in and unlock the app on this device.",
+        "NSCameraUsageDescription": "ORYNO uses your camera to take a KYC selfie.",
+        "NSContactsUsageDescription": "ORYNO uses your contacts so you can pick a phone number for airtime and data.",
+        "NSPhotoLibraryUsageDescription": "ORYNO uses your photos to upload gift card images."
+      }
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "ORYNO uses Face ID to sign in and unlock the app on this device."
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/oryno-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#FF6A00",
+          "dark": {
+            "backgroundColor": "#FF6A00"
+          }
+        }
+      ],
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Allow ORYNO to access your contacts so you can pick a phone number for airtime and data."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow ORYNO to access your photos to upload gift card images.",
+          "cameraPermission": "Allow ORYNO to use your camera for your KYC selfie.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "sounds": [],
+          "enableBackgroundRemoteNotifications": true
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "15515375-cb7e-49bb-8589-d61ce5bffc2a"
+      }
+    },
+    "owner": "orynoapps-team"
+  }
+}

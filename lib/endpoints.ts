@@ -1,0 +1,148 @@
+/**
+ * Logical external API paths used by the mobile app.
+ * `apiFetch` rewrites these to `/api/external/v1/...`.
+ */
+export const endpoints = {
+  auth: {
+    sync: '/api/auth/sync',
+    logout: '/api/auth/logout',
+    twoFactorStatus: '/api/auth/2fa/status',
+    twoFactorVerify: '/api/auth/2fa/verify',
+  },
+  wallet: {
+    root: '/api/wallet',
+    depositAccount: '/api/wallet/deposit-account',
+    depositReconcile: '/api/wallet/deposit-account/reconcile',
+    fundSimulate: '/api/wallet/fund/simulate',
+    fundInitialize: '/api/wallet/fund/initialize',
+    fundVerify: '/api/wallet/fund/verify',
+    cards: '/api/wallet/cards',
+    cardReveal: (id: string) => `/api/wallet/cards/${encodeURIComponent(id)}/reveal`,
+    cardStatus: (id: string) => `/api/wallet/cards/${encodeURIComponent(id)}/status`,
+    cardPurchase: '/api/wallet/cards/purchase',
+    cardPurchaseVerify: '/api/wallet/cards/purchase/verify',
+    withdraw: '/api/wallet/withdraw',
+    banks: '/api/wallet/banks',
+    banksResolve: '/api/wallet/banks/resolve',
+    fx: '/api/wallet/fx',
+    convert: '/api/wallet/convert',
+    usdFund: '/api/wallet/usd/fund',
+    usdVerify: '/api/wallet/usd/verify',
+  },
+  transactions: {
+    list: '/api/transactions',
+    detail: (id: string) => `/api/transactions/${encodeURIComponent(id)}`,
+    statement: '/api/transactions/statement',
+    settle: '/api/transactions/settle',
+  },
+  notifications: '/api/notifications',
+  devices: '/api/devices',
+  ads: '/api/ads',
+  onboarding: '/api/onboarding',
+  geo: {
+    country: '/api/geo/country',
+  },
+  profile: '/api/profile',
+  referrals: '/api/referrals',
+  invoices: {
+    list: '/api/invoices',
+    detail: (id: string) => `/api/invoices/${encodeURIComponent(id)}`,
+    pdf: (id: string) => `/api/invoices/${encodeURIComponent(id)}/pdf`,
+    paymentLink: (id: string) =>
+      `/api/invoices/${encodeURIComponent(id)}/payment-link`,
+  },
+  paymentLinks: {
+    list: '/api/payment-links',
+  },
+  beneficiaries: '/api/beneficiaries',
+  settings: {
+    root: '/api/settings',
+    twoFactorSetup: '/api/settings/2fa/setup',
+    twoFactorEnable: '/api/settings/2fa/enable',
+    twoFactorDisable: '/api/settings/2fa/disable',
+  },
+  support: {
+    errorReport: '/api/support/error-report',
+    tickets: '/api/support/tickets',
+  },
+  waitlist: {
+    usdCard: '/api/waitlist/usd-card',
+    internationalGifting: '/api/waitlist/international-gifting',
+  },
+  /** Friendly service aliases (preferred) — backed by oryno-website /api/services/*. */
+  services: {
+    airtimePurchase: '/api/services/airtime/purchase',
+    dataPurchase: '/api/services/data/purchase',
+    billsVerify: '/api/services/bills/verify',
+    billsPurchase: '/api/services/bills/purchase',
+    billsVariations: '/api/services/bills/variations',
+    /** Poll electricity/bill settlement until the disco token lands. */
+    billsStatus: '/api/services/electricity/status',
+    bettingProviders: '/api/services/betting/providers',
+    bettingVerify: '/api/services/betting/verify',
+    bettingFund: '/api/services/betting/fund',
+    vtpassServices: '/api/services/vtpass',
+    variations: '/api/services/variations',
+    internationalCountries: '/api/services/international/countries',
+    internationalProductTypes: '/api/services/international/product-types',
+    internationalOperators: '/api/services/international/operators',
+    /** @deprecated Use `endpoints.jap.*` — same handlers, website uses `/api/jap/*` directly. */
+    social: '/api/services/social',
+    socialPurchase: '/api/services/social/purchase',
+    socialStatus: (id: string) =>
+      `/api/services/social/status/${encodeURIComponent(id)}`,
+    giftCardCountries: '/api/services/gift-cards/countries',
+    giftCardProducts: '/api/services/gift-cards/products',
+    giftCardBuy: '/api/services/gift-cards/buy',
+    giftCardSellCatalog: '/api/services/gift-cards/sell/catalog',
+    giftCardSellRates: '/api/services/gift-cards/sell/rates',
+    giftCardSell: '/api/services/gift-cards/sell',
+    numbersCountries: '/api/services/numbers/countries',
+    numbersServices: '/api/services/numbers/services',
+    numbersPrices: '/api/services/numbers/prices',
+    numbersPurchase: '/api/services/numbers/purchase',
+    numbersStatus: (id: string) =>
+      `/api/services/numbers/status/${encodeURIComponent(id)}`,
+    emailsDomains: '/api/services/emails/domains',
+    emailsPurchase: '/api/services/emails/purchase',
+    emailsStatus: (id: string) =>
+      `/api/services/emails/status/${encodeURIComponent(id)}`,
+  },
+  /** Legacy provider paths (still available). */
+  vtpass: {
+    services: '/api/vtpass/services',
+    variations: '/api/vtpass/variations',
+    quote: '/api/vtpass/quote',
+    verify: '/api/vtpass/verify',
+    airtime: '/api/vtpass/purchase/airtime',
+    data: '/api/vtpass/purchase/data',
+    bill: '/api/vtpass/purchase/bill',
+    billStatus: '/api/vtpass/purchase/bill/status',
+    internationalProductTypes: '/api/vtpass/international/product-types',
+    internationalOperators: '/api/vtpass/international/operators',
+  },
+  /** Social boost (Famsup/JAP) — matches website `/api/jap/*`. */
+  jap: {
+    services: '/api/jap/services',
+    purchase: '/api/jap/purchase',
+    status: (id: string) => `/api/jap/status/${encodeURIComponent(id)}`,
+  },
+  reloadly: {
+    countries: '/api/reloadly/countries',
+    products: '/api/reloadly/products',
+    buy: '/api/reloadly/buy',
+  },
+  sogo: {
+    catalog: '/api/sogo/catalog',
+    rates: '/api/sogo/rates',
+    sell: '/api/sogo/sell',
+  },
+  herosms: {
+    countries: '/api/herosms/countries',
+    services: '/api/herosms/services',
+    prices: '/api/herosms/prices',
+    purchaseNumber: '/api/herosms/purchase/number',
+    emailDomains: '/api/herosms/emails/domains',
+    purchaseEmail: '/api/herosms/purchase/email',
+  },
+} as const;
