@@ -1,43 +1,50 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Easing } from 'react-native';
+import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
+import { DynamicColorIOS } from 'react-native';
 
-import { FloatingGlassTabBar } from '@/components/navigation/floating-glass-tab-bar';
-import { useAppTheme } from '@/context/theme-context';
+import { Brand } from '@/constants/theme';
 
+/**
+ * System tab bar. On iOS 26, compiled with Xcode 26, this is Liquid Glass.
+ */
 export default function TabLayout() {
-  const { colors } = useAppTheme();
-
   return (
-    <Tabs
-      tabBar={(props) => <FloatingGlassTabBar {...props} />}
-      screenOptions={{
-        headerShown: false,
-        animation: 'fade',
-        transitionSpec: {
-          animation: 'timing',
-          config: {
-            duration: 240,
-            easing: Easing.out(Easing.cubic),
-          },
-        },
-        sceneStyle: { backgroundColor: colors.background },
-        lazy: true,
-        freezeOnBlur: false,
-        tabBarActiveTintColor: colors.tint,
-        tabBarInactiveTintColor: colors.mutedForeground,
-        tabBarStyle: {
-          position: 'absolute',
-          backgroundColor: 'transparent',
-          borderTopWidth: 0,
-          elevation: 0,
-        },
-      }}>
-      <Tabs.Screen name="index" options={{ title: 'Home' }} />
-      <Tabs.Screen name="cards" options={{ title: 'Cards' }} />
-      <Tabs.Screen name="services" options={{ title: 'Services' }} />
-      <Tabs.Screen name="history" options={{ title: 'History' }} />
-      <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
-    </Tabs>
+    <NativeTabs
+      tintColor={DynamicColorIOS({
+        light: Brand.orange,
+        dark: Brand.orangeSoft,
+      })}
+      iconColor={{
+        default: DynamicColorIOS({
+          light: Brand.grayMedium,
+          dark: '#AEAEB2',
+        }),
+        selected: DynamicColorIOS({
+          light: Brand.orange,
+          dark: Brand.orangeSoft,
+        }),
+      }}
+      minimizeBehavior="automatic"
+      disableTransparentOnScrollEdge={false}>
+      <NativeTabs.Trigger name="index">
+        <Label>Home</Label>
+        <Icon sf={{ default: 'house', selected: 'house.fill' }} />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="cards">
+        <Label>Cards</Label>
+        <Icon sf={{ default: 'creditcard', selected: 'creditcard.fill' }} />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="services">
+        <Label>Services</Label>
+        <Icon sf={{ default: 'square.grid.2x2', selected: 'square.grid.2x2.fill' }} />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="history">
+        <Label>History</Label>
+        <Icon sf={{ default: 'clock', selected: 'clock.fill' }} />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="profile">
+        <Label>Profile</Label>
+        <Icon sf={{ default: 'person', selected: 'person.fill' }} />
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }

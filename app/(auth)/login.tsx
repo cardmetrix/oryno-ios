@@ -169,6 +169,10 @@ export default function LoginScreen() {
   }, []);
 
   const onBiometricLogin = useCallback(async () => {
+    if (isSignedIn) {
+      await continueAfterSignedIn(null);
+      return;
+    }
     if (!meta?.available) {
       alert.warning(
         meta?.title || 'Biometric sign-in',
@@ -211,16 +215,16 @@ export default function LoginScreen() {
     } finally {
       setBioLoading(false);
     }
-  }, [meta, resumeExistingSession, savedLogin, signInWithPassword]);
+  }, [isSignedIn, meta, resumeExistingSession, savedLogin, signInWithPassword]);
 
   useEffect(() => {
-    if (autoPrompted.current || !meta?.available || !savedLogin || !isLoaded) return;
+    if (autoPrompted.current || !meta?.available || !savedLogin || !isLoaded || isSignedIn) return;
     autoPrompted.current = true;
     const t = setTimeout(() => {
       void onBiometricLogin();
     }, 400);
     return () => clearTimeout(t);
-  }, [isLoaded, meta?.available, onBiometricLogin, savedLogin]);
+  }, [isLoaded, isSignedIn, meta?.available, onBiometricLogin, savedLogin]);
 
   const onSubmit = async () => {
     if (!isLoaded || !signIn) return;

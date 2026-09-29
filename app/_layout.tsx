@@ -16,7 +16,7 @@ import { ThemeSync } from '@/components/theme-sync';
 import { AlertSheetHost } from '@/components/ui/alert-sheet';
 import { Toaster } from '@/components/ui/toaster';
 import { Brand } from '@/constants/theme';
-import { fadeScreenOptions } from '@/constants/transitions';
+import { stackScreenOptions } from '@/constants/transitions';
 import { ApiAuthBridge } from '@/context/api-provider';
 import { AppLockProvider } from '@/context/app-lock-context';
 import { PushNotificationProvider } from '@/context/push-notification-context';
@@ -54,10 +54,10 @@ function NavigationRoot() {
 
   return (
     <ThemeProvider value={navTheme}>
-      <Stack screenOptions={fadeScreenOptions}>
+      <Stack screenOptions={stackScreenOptions}>
         <Stack.Screen name="index" options={{ animation: 'fade' }} />
-        <Stack.Screen name="(auth)" options={{ animation: 'fade' }} />
-        <Stack.Screen name="(app)" options={{ animation: 'fade' }} />
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(app)" />
       </Stack>
       <ThemeSync />
       <ReferralDeepLinkCapture />

@@ -15,6 +15,7 @@ import { api } from '@/lib/api';
 import {
   authenticateBiometric,
   getBiometricMeta,
+  isBiometricPromptActive,
   readBiometricPref,
   writeBiometricPref,
   type BiometricMeta,
@@ -112,7 +113,11 @@ export function AppLockProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const onChange = (state: AppStateStatus) => {
-      if (state === 'background' || state === 'inactive') {
+      // Face ID / Touch ID puts the app in `inactive` without leaving it.
+      // Treating that as background re-locks as soon as the prompt closes.
+      if (isBiometricPromptActive()) return;
+      if (state === 'inactive') return;
+      if (state === 'background') {
         backgroundedAt.current = Date.now();
         return;
       }
@@ -132,9 +137,10 @@ export function AppLockProvider({ children }: { children: ReactNode }) {
 
   const unlock = useCallback(async () => {
     const result = await authenticateBiometric(meta.promptMessage);
+    backgroundedAt.current = null;
+    skipLockUntil.current = Date.now() + 3000;
     if (result.success) {
       setLocked(false);
-      skipLockUntil.current = Date.now() + 800;
       return true;
     }
     return false;

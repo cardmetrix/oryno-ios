@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ORYNO",
-    "slug": "oryno-ios",
+    "slug": "oryno",
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/oryno-app-icon.png",

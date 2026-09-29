@@ -88,6 +88,13 @@ export async function getBiometricMeta(): Promise<BiometricMeta> {
   }
 }
 
+let biometricPromptDepth = 0;
+
+/** True while the system Face ID / Touch ID sheet is on screen. */
+export function isBiometricPromptActive() {
+  return biometricPromptDepth > 0;
+}
+
 export async function authenticateBiometric(promptMessage?: string) {
   if (Platform.OS === 'web') {
     return { success: false as const, error: 'not_available' };
@@ -101,6 +108,7 @@ export async function authenticateBiometric(promptMessage?: string) {
     };
   }
 
+  biometricPromptDepth += 1;
   try {
     const result = await LocalAuthentication.authenticateAsync({
       promptMessage: promptMessage || meta.promptMessage,
@@ -112,6 +120,8 @@ export async function authenticateBiometric(promptMessage?: string) {
     return { success: false as const, error: result.error || 'authentication_failed' };
   } catch {
     return { success: false as const, error: 'unknown' };
+  } finally {
+    biometricPromptDepth = Math.max(0, biometricPromptDepth - 1);
   }
 }
 

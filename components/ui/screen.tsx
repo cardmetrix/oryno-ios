@@ -61,11 +61,7 @@ export function Screen({
     </Animated.View>
   );
 
-  const scrollBottomPad = footer
-    ? 20
-    : inTabs
-      ? 108
-      : 28;
+  const scrollBottomPad = footer ? 20 : 28;
 
   const scrollContentStyle = [
     styles.scrollContent,

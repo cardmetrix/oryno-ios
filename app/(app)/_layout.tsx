@@ -26,7 +26,7 @@ export default function AppLayout() {
         ...stackScreenOptions,
         contentStyle: { backgroundColor: colors.background },
       }}>
-      <Stack.Screen name="(tabs)" options={{ animation: 'fade', animationDuration: 200, gestureEnabled: false }} />
+      <Stack.Screen name="(tabs)" options={{ animation: 'default', gestureEnabled: false }} />
       <Stack.Screen name="fund" options={modalScreenOptions} />
       <Stack.Screen name="convert" options={modalScreenOptions} />
       <Stack.Screen name="withdraw" options={modalScreenOptions} />

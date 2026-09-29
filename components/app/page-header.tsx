@@ -1,6 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { useAppTheme } from '@/context/theme-context';
 
@@ -17,16 +15,7 @@ export function PageHeader({ title, subtitle, showBack = true, right }: Props) {
   return (
     <View style={styles.wrap}>
       <View style={styles.row}>
-        {showBack ? (
-          <Pressable
-            onPress={() => router.back()}
-            style={[styles.back, { backgroundColor: colors.muted }]}
-            hitSlop={8}>
-            <Ionicons name="chevron-back" size={22} color={colors.foreground} />
-          </Pressable>
-        ) : (
-          <View style={styles.spacer} />
-        )}
+       
         <View style={styles.center}>
           <Text style={[styles.title, { color: colors.foreground }]}>{title}</Text>
           {subtitle ? (

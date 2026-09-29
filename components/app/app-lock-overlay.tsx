@@ -1,7 +1,8 @@
 import { useAuth } from '@clerk/clerk-expo';
-import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import { useEffect, useMemo, useState } from 'react';
+import { router, useSegments } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,44 +12,51 @@ import { Brand, type ThemeColors } from '@/constants/theme';
 import { useAppLock } from '@/context/app-lock-context';
 import { useAppTheme } from '@/context/theme-context';
 import { useTwoFactorOptional } from '@/context/two-factor-context';
-import { biometricErrorMessage } from '@/lib/biometric';
 
 export function AppLockOverlay() {
   const { locked, unlock, meta } = useAppLock();
   const twoFa = useTwoFactorOptional();
   const { signOut } = useAuth();
+  const segments = useSegments();
   const { colors } = useAppTheme();
   const insets = useSafeAreaInsets();
   const styles = useMemo(() => makeStyles(colors), [colors]);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const promptedForLock = useRef(false);
+  const unlockRef = useRef(unlock);
+  const segmentsRef = useRef(segments);
+  unlockRef.current = unlock;
+  segmentsRef.current = segments;
 
   useEffect(() => {
     if (!locked) {
-      setError(null);
+      promptedForLock.current = false;
       setBusy(false);
       return;
     }
-    let cancelled = false;
+    if (promptedForLock.current) return;
+    promptedForLock.current = true;
+
     setBusy(true);
-    void unlock().then((ok) => {
-      if (cancelled) return;
+    void unlockRef.current().then((ok) => {
       setBusy(false);
-      if (!ok) setError(null);
+      if (!ok) return;
+      const inApp = (segmentsRef.current as string[]).includes('(app)');
+      if (!inApp) router.replace('/(app)/(tabs)');
     });
-    return () => {
-      cancelled = true;
-    };
-  }, [locked, unlock]);
+  }, [locked]);
 
   if (!locked || twoFa?.blocking) return null;
 
+  const method = meta.title || 'Face ID';
+
   async function onUnlock() {
     setBusy(true);
-    setError(null);
     const ok = await unlock();
     setBusy(false);
-    if (!ok) setError(biometricErrorMessage('authentication_failed', meta));
+    if (!ok) return;
+    const inApp = (segments as string[]).includes('(app)');
+    if (!inApp) router.replace('/(app)/(tabs)');
   }
 
   return (
@@ -72,16 +80,19 @@ export function AppLockOverlay() {
 
           <Animated.View entering={FadeInUp.delay(140).duration(380)} style={styles.copy}>
             <View style={styles.iconBubble}>
-              <Ionicons name="finger-print" size={28} color={Brand.orange} />
+              <SymbolView
+                name={meta.kind === 'fingerprint' ? 'touchid' : 'faceid'}
+                tintColor={Brand.orange}
+                size={32}
+              />
             </View>
             <Text style={styles.title}>App locked</Text>
-            <Text style={styles.sub}>Use your fingerprint to unlock</Text>
-            {error ? <Text style={styles.error}>{error}</Text> : null}
+            <Text style={styles.sub}>Use {method} to open your dashboard</Text>
           </Animated.View>
 
           <Animated.View entering={FadeInUp.delay(200).duration(380)} style={styles.actions}>
             <Button
-              title={busy ? 'Waiting…' : 'Use your fingerprint'}
+              title={busy ? 'Waiting…' : `Unlock with ${method}`}
               onPress={() => void onUnlock()}
               loading={busy}
               disabled={busy}
@@ -155,13 +166,6 @@ function makeStyles(colors: ThemeColors) {
       textAlign: 'center',
       lineHeight: 20,
       paddingHorizontal: 16,
-    },
-    error: {
-      marginTop: 8,
-      color: Brand.error,
-      fontSize: 13,
-      fontWeight: '600',
-      textAlign: 'center',
     },
     actions: { gap: 14 },
     signOut: {
