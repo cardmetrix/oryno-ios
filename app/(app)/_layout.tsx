@@ -27,8 +27,8 @@ export default function AppLayout() {
         contentStyle: { backgroundColor: colors.background },
       }}>
       <Stack.Screen name="(tabs)" options={{ animation: 'default', gestureEnabled: false }} />
-      <Stack.Screen name="fund" options={modalScreenOptions} />
-      <Stack.Screen name="convert" options={modalScreenOptions} />
+      <Stack.Screen name="fund" />
+      <Stack.Screen name="convert" />
       <Stack.Screen name="withdraw" options={modalScreenOptions} />
       <Stack.Screen name="notifications" />
       <Stack.Screen name="wallet/add-bank" options={formSheetScreenOptions} />

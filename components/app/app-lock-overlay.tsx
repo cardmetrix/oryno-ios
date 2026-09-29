@@ -80,11 +80,7 @@ export function AppLockOverlay() {
 
           <Animated.View entering={FadeInUp.delay(140).duration(380)} style={styles.copy}>
             <View style={styles.iconBubble}>
-              <SymbolView
-                name={meta.kind === 'fingerprint' ? 'touchid' : 'faceid'}
-                tintColor={Brand.orange}
-                size={32}
-              />
+              <SymbolView name="faceid" tintColor={Brand.orange} size={32} />
             </View>
             <Text style={styles.title}>App locked</Text>
             <Text style={styles.sub}>Use {method} to open your dashboard</Text>

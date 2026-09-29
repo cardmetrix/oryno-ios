@@ -1,6 +1,6 @@
 import { useAuth, useClerk, useSignIn } from '@clerk/clerk-expo';
-import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import { SymbolView } from 'expo-symbols';
 import { Link, router } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -303,7 +303,7 @@ export default function LoginScreen() {
             {bioLoading ? (
               <ActivityIndicator color={Brand.orange} />
             ) : (
-              <Ionicons name="finger-print" size={32} color={Brand.orange} />
+              <SymbolView name="faceid" tintColor={Brand.orange} size={32} />
             )}
           </Pressable>
         ) : null}
