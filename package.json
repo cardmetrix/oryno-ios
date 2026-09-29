@@ -15,8 +15,8 @@
     "eas:login": "pnpm dlx eas-cli@latest login",
     "eas:logout": "pnpm dlx eas-cli@latest logout",
     "eas:whoami": "pnpm dlx eas-cli@latest whoami",
-    "eas:build:preview": "pnpm dlx eas-cli@latest build --platform ios --profile preview",
-    "eas:build:production": "pnpm dlx eas-cli@latest build --platform ios --profile production",
+    "eas:build:preview": "EXPO_NO_CAPABILITY_SYNC=1 pnpm dlx eas-cli@latest build --platform ios --profile preview",
+    "eas:build:production": "EXPO_NO_CAPABILITY_SYNC=1 pnpm dlx eas-cli@latest build --platform ios --profile production",
     "eas:submit": "pnpm dlx eas-cli@latest submit --platform ios --profile production",
     "eas:env:push:production": "pnpm dlx eas-cli@latest env:push --environment production --path .env.eas --force"
   },
