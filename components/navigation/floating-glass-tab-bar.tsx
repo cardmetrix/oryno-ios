@@ -1,5 +1,5 @@
 import { SymbolView, type SFSymbol } from 'expo-symbols';
-import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import type { BottomTabBarProps } from 'expo-router/build/react-navigation/bottom-tabs';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { type ReactNode } from 'react';
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
   },
   glassTint: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
   },
   row: {
     flexDirection: 'row',
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     minWidth: 58,
   },
   activePill: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     borderRadius: 18,
   },
   label: {

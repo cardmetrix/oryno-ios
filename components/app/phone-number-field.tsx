@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import * as Contacts from 'expo-contacts';
+import { Contact } from 'expo-contacts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
@@ -70,10 +70,9 @@ export function PhoneNumberField({
     setPicking(true);
     setOpen(false);
     try {
-      const contact = await Contacts.presentContactPickerAsync();
-      const tel =
-        contact?.phoneNumbers?.find((p) => p.number)?.number ??
-        contact?.phoneNumbers?.[0]?.number;
+      const contact = await Contact.presentPicker();
+      const phones = contact ? await contact.getPhones() : [];
+      const tel = phones.find((phone) => phone.number)?.number ?? phones[0]?.number;
       if (tel) onChange(normalizeTel(tel));
     } catch {
       // User cancelled or unsupported — ignore.

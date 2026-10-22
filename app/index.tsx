@@ -9,7 +9,6 @@ import { Redirect } from 'expo-router';
 export default function Index() {
   const { isSignedIn, isLoaded } = useAuth();
 
-  // Boot splash already waited for Clerk — avoid a second SplashLoading remount.
   if (!isLoaded) return null;
 
   if (isSignedIn) {

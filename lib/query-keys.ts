@@ -6,6 +6,10 @@ export const queryKeys = {
   notifications: ['notifications'] as const,
   ads: (placement: string) => ['ads', placement] as const,
   onboarding: ['onboarding'] as const,
+  cards: ['cards'] as const,
+  waitlist: {
+    internationalGifting: ['waitlist', 'international-gifting'] as const,
+  },
   catalogs: {
     vtpass: (identifier: string) => ['catalog', 'vtpass', identifier] as const,
     variations: (serviceId: string) => ['catalog', 'variations', serviceId] as const,
@@ -36,4 +40,6 @@ export const PERSISTABLE_QUERY_ROOTS = new Set([
   'ads',
   'onboarding',
   'catalog',
+  'cards',
+  'waitlist',
 ]);

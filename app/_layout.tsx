@@ -1,5 +1,5 @@
 import { ClerkProvider } from '@clerk/clerk-expo';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Text, StyleSheet, View } from 'react-native';

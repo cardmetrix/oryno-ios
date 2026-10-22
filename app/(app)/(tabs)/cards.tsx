@@ -1,8 +1,8 @@
-import { useFocusEffect } from '@react-navigation/native';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Ionicons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
@@ -18,14 +18,14 @@ import Animated, {
 import { PageHeader } from '@/components/app/page-header';
 import { TransactionPinModal } from '@/components/app/transaction-pin-modal';
 import { Screen } from '@/components/ui/screen';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Brand, type ThemeColors } from '@/constants/theme';
 import { useAppTheme } from '@/context/theme-context';
 import { useInvalidateWallet } from '@/hooks/use-invalidate-wallet';
 import { usePullRefresh } from '@/hooks/use-pull-refresh';
-import { useSettlePendingTransactions } from '@/hooks/use-settle-pending-transactions';
 import { api } from '@/lib/api';
 import { endpoints } from '@/lib/endpoints';
+import { STALE } from '@/lib/query-client';
+import { queryKeys } from '@/lib/query-keys';
 import { toast } from '@/lib/toast';
 
 type VirtualCard = {
@@ -108,10 +108,16 @@ export default function CardsScreen() {
     transactionId?: string;
   }>();
   const invalidateWallet = useInvalidateWallet();
-  useSettlePendingTransactions(true);
+  const queryClient = useQueryClient();
 
-  const [data, setData] = useState<CardsPayload | null>(null);
-  const [loading, setLoading] = useState(true);
+  const cardsQuery = useQuery({
+    queryKey: queryKeys.cards,
+    queryFn: () => api.get<CardsPayload>(endpoints.wallet.cards),
+    staleTime: STALE.catalog,
+  });
+  const data = cardsQuery.data ?? null;
+  const loading = cardsQuery.isFetching && !data;
+
   const [joining, setJoining] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hidden, setHidden] = useState(true);
@@ -121,22 +127,10 @@ export default function CardsScreen() {
   const [pinError, setPinError] = useState<string | null>(null);
   const [busyStatus, setBusyStatus] = useState(false);
   const verifyStarted = useRef<string | null>(null);
-  const skipNextFocusRefresh = useRef(true);
 
   const load = useCallback(async () => {
-    try {
-      const json = await api.get<CardsPayload>(endpoints.wallet.cards);
-      setData(json);
-      setSelectedId((prev) => {
-        if (prev && json.cards.some((c) => c.id === prev)) return prev;
-        return json.cards[0]?.id ?? null;
-      });
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to load cards');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    await queryClient.invalidateQueries({ queryKey: queryKeys.cards });
+  }, [queryClient]);
 
   const softRefresh = useCallback(async () => {
     await load();
@@ -146,17 +140,17 @@ export default function CardsScreen() {
   const { pulling, onRefresh } = usePullRefresh(softRefresh);
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    if (!data) return;
+    setSelectedId((prev) => {
+      if (prev && data.cards.some((c) => c.id === prev)) return prev;
+      return data.cards[0]?.id ?? null;
+    });
+  }, [data]);
 
   useFocusEffect(
     useCallback(() => {
-      if (skipNextFocusRefresh.current) {
-        skipNextFocusRefresh.current = false;
-        return;
-      }
-      void load();
-    }, [load]),
+      void queryClient.refetchQueries({ queryKey: queryKeys.cards, stale: true });
+    }, [queryClient]),
   );
 
   useEffect(() => {
@@ -320,12 +314,6 @@ export default function CardsScreen() {
 
   return (
     <Screen scroll refreshing={pulling} onRefresh={onRefresh} header={header}>
-      {loading || !data ? (
-        <View style={{ gap: 16 }}>
-          <Skeleton height={192} radius={22} />
-          <Skeleton height={128} radius={22} />
-        </View>
-      ) : (
         <View style={{ gap: 16 }}>
           {pendingReview ? (
             <View style={styles.pendingBanner}>
@@ -339,7 +327,7 @@ export default function CardsScreen() {
               </View>
             </View>
           ) : null}
-          {!selected ? (
+          {!data || !selected ? (
             <>
               <CardSurface>
                 <View style={styles.soonTop}>
@@ -381,18 +369,18 @@ export default function CardsScreen() {
                       <View style={{ flex: 1 }}>
                         <Text style={styles.detailTitle}>You are on the waitlist</Text>
                         <Text style={styles.detailBody}>
-                          {data.waitlist?.joinedAt
+                          {data?.waitlist?.joinedAt
                             ? `Joined ${new Date(data.waitlist.joinedAt).toLocaleDateString('en-NG', { dateStyle: 'medium' })}`
                             : 'You will be notified at launch'}
                         </Text>
                       </View>
                     </View>
                     <Text style={styles.detailBody}>
-                      We will email and push you when {data.issuer} cards go live.
+                      We will email and push you when {data?.issuer ?? 'USD'} cards go live.
                     </Text>
                     <Pressable
-                      disabled={joining}
-                      onPress={() => void onLeaveWaitlist()}
+                    disabled={joining || loading}
+                    onPress={() => void onLeaveWaitlist()}
                       style={[styles.leaveBtn, joining && styles.disabled]}>
                       <Text style={styles.leaveText}>
                         {joining ? 'Leaving...' : 'Leave waitlist'}
@@ -404,12 +392,12 @@ export default function CardsScreen() {
                     <View>
                       <Text style={styles.detailTitle}>Join the waitlist</Text>
                       <Text style={[styles.detailBody, { marginTop: 2 }]}>
-                        Get notified the moment {data.issuer} USD virtual cards launch.
+                        Get notified the moment {data?.issuer ?? 'USD'} USD virtual cards launch.
                       </Text>
                     </View>
                     <Pressable
-                      disabled={joining}
-                      onPress={() => void onJoinWaitlist()}
+                    disabled={joining || loading}
+                    onPress={() => void onJoinWaitlist()}
                       style={[styles.joinBtn, joining && styles.disabled]}>
                       <Ionicons name="notifications-outline" size={16} color={Brand.white} />
                       <Text style={styles.joinText}>
@@ -500,7 +488,7 @@ export default function CardsScreen() {
             </CardSurface>
           )}
 
-          {data.cards.length > 1 ? (
+          {data && data.cards.length > 1 ? (
             <View style={styles.cardPicker}>
               {data.cards.map((card) => (
                 <Pressable
@@ -565,7 +553,6 @@ export default function CardsScreen() {
             </View>
           ) : null}
         </View>
-      )}
 
       <TransactionPinModal
         visible={pinOpen}

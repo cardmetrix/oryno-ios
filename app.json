@@ -7,15 +7,18 @@
     "icon": "./assets/images/oryno-app-icon.png",
     "scheme": "oryno",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "platforms": ["ios"],
+    "platforms": [
+      "ios"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.oryno.africa",
       "buildNumber": "1",
       "usesAppleSignIn": true,
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification"],
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
         "ITSAppUsesNonExemptEncryption": false,
         "NSFaceIDUsageDescription": "ORYNO uses Face ID to sign in and unlock the app on this device.",
         "NSCameraUsageDescription": "ORYNO uses your camera to take a KYC selfie.",
@@ -63,7 +66,13 @@
           "sounds": [],
           "enableBackgroundRemoteNotifications": true
         }
-      ]
+      ],
+      "expo-font",
+      "expo-image",
+      "expo-secure-store",
+      "expo-sharing",
+      "expo-status-bar",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,

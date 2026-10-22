@@ -6,6 +6,8 @@ export const endpoints = {
   auth: {
     sync: '/api/auth/sync',
     logout: '/api/auth/logout',
+    /** Permanent account and personal-data deletion. */
+    account: '/api/auth/account',
     twoFactorStatus: '/api/auth/2fa/status',
     twoFactorVerify: '/api/auth/2fa/verify',
   },

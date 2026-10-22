@@ -1,3 +1,4 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -14,11 +15,12 @@ import Animated, {
 
 import { PageHeader } from '@/components/app/page-header';
 import { Screen } from '@/components/ui/screen';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Brand, type ThemeColors } from '@/constants/theme';
 import { useAppTheme } from '@/context/theme-context';
 import { api } from '@/lib/api';
 import { endpoints } from '@/lib/endpoints';
+import { STALE } from '@/lib/query-client';
+import { queryKeys } from '@/lib/query-keys';
 import { toast } from '@/lib/toast';
 
 const HERO_BG = require('@/assets/images/international-gifting-bg.png');
@@ -54,24 +56,21 @@ const DETAILS = [
 export default function InternationalGiftingScreen() {
   const { colors } = useAppTheme();
   const styles = useMemo(() => makeStyles(colors), [colors]);
-  const [status, setStatus] = useState<WaitlistStatus | null>(null);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+  const statusQuery = useQuery({
+    queryKey: queryKeys.waitlist.internationalGifting,
+    queryFn: () => api.get<WaitlistStatus>(endpoints.waitlist.internationalGifting),
+    staleTime: STALE.catalog,
+  });
+  const status = statusQuery.data ?? null;
+  const loading = statusQuery.isFetching && !status;
   const [joining, setJoining] = useState(false);
 
   const load = useCallback(async () => {
-    try {
-      const json = await api.get<WaitlistStatus>(endpoints.waitlist.internationalGifting);
-      setStatus(json);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to load');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
+    await queryClient.invalidateQueries({
+      queryKey: queryKeys.waitlist.internationalGifting,
+    });
+  }, [queryClient]);
 
   async function onJoin() {
     setJoining(true);
@@ -116,12 +115,6 @@ export default function InternationalGiftingScreen() {
           showBack
         />
       }>
-      {loading || !status ? (
-        <View style={{ gap: 16 }}>
-          <Skeleton height={208} radius={22} />
-          <Skeleton height={160} radius={22} />
-        </View>
-      ) : (
         <View style={{ gap: 16 }}>
           <HeroCard />
           <View style={styles.panel}>
@@ -140,7 +133,7 @@ export default function InternationalGiftingScreen() {
           </View>
 
           <View style={styles.panel}>
-            {status.joined ? (
+            {status?.joined ? (
               <View style={{ gap: 12 }}>
                 <View style={styles.detailRow}>
                   <View style={styles.joinedIcon}>
@@ -159,7 +152,7 @@ export default function InternationalGiftingScreen() {
                   We will email and push you when International Gifting goes live.
                 </Text>
                 <Pressable
-                  disabled={joining}
+                  disabled={joining || loading}
                   onPress={() => void onLeave()}
                   style={[styles.leaveBtn, joining && styles.disabled]}>
                   <Text style={styles.leaveText}>
@@ -176,7 +169,7 @@ export default function InternationalGiftingScreen() {
                   </Text>
                 </View>
                 <Pressable
-                  disabled={joining}
+                  disabled={joining || loading}
                   onPress={() => void onJoin()}
                   style={[styles.joinBtn, joining && styles.disabled]}>
                   <Ionicons name="notifications-outline" size={16} color={Brand.white} />
@@ -188,7 +181,6 @@ export default function InternationalGiftingScreen() {
             )}
           </View>
         </View>
-      )}
     </Screen>
   );
 }

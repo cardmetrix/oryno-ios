@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { SymbolView } from 'expo-symbols';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
@@ -188,7 +189,8 @@ export default function SecurityScreen() {
           onValueChange={onToggle2fa}
         />
         <SecurityRow
-          icon="finger-print"
+          icon="scan-outline"
+          symbol="faceid"
           title={meta.title}
           subtitle={
             meta.available
@@ -307,6 +309,7 @@ export default function SecurityScreen() {
 
 function SecurityRow({
   icon,
+  symbol,
   title,
   subtitle,
   value,
@@ -314,6 +317,7 @@ function SecurityRow({
   onValueChange,
 }: {
   icon: keyof typeof Ionicons.glyphMap;
+  symbol?: 'faceid';
   title: string;
   subtitle: string;
   value: boolean;
@@ -326,7 +330,11 @@ function SecurityRow({
     <View style={styles.securityRow}>
       <View style={styles.pinLeft}>
         <View style={styles.iconBubble}>
-          <Ionicons name={icon} size={18} color={Brand.orange} />
+          {symbol ? (
+            <SymbolView name={symbol} tintColor={Brand.orange} size={18} />
+          ) : (
+            <Ionicons name={icon} size={18} color={Brand.orange} />
+          )}
         </View>
         <View style={{ flex: 1, minWidth: 0 }}>
           <Text style={styles.rowTitle}>{title}</Text>

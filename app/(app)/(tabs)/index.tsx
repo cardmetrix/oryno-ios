@@ -4,7 +4,7 @@ import { ServiceActionCard } from '@/components/app/service-action-card';
 import { TransactionRow } from '@/components/app/transaction-row';
 import { GiftCardIcon } from '@/components/icons/gift-card-icon';
 import { Screen } from '@/components/ui/screen';
-import { HomeSkeleton } from '@/components/ui/skeletons';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Brand } from '@/constants/theme';
 import { useAppTheme } from '@/context/theme-context';
 import { useNotificationsQuery } from '@/hooks/use-notifications-query';
@@ -14,9 +14,8 @@ import { useSettlePendingTransactions } from '@/hooks/use-settle-pending-transac
 import { useWallet } from '@/hooks/use-wallet';
 import { useUser } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
-import { useFocusEffect } from '@react-navigation/native';
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import type { ComponentProps, ReactNode } from 'react';
 import { useCallback, useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -102,14 +101,6 @@ export default function HomeScreen() {
 
   const { pulling, onRefresh } = usePullRefresh(onPullRefresh);
 
-  if (loading && !data) {
-    return (
-      <Screen scroll>
-        <HomeSkeleton />
-      </Screen>
-    );
-  }
-
   return (
     <Screen
       scroll
@@ -168,7 +159,7 @@ export default function HomeScreen() {
       }>
       <View style={styles.walletBlock}>
         <DashboardWalletCarousel loading={loading && !data} />
-        <AdCarousel />
+      
       </View>
 
       {error ? (
@@ -219,7 +210,9 @@ export default function HomeScreen() {
           ))}
         </View>
       </View>
-
+      <View style={styles.walletBlock}>
+        <AdCarousel />
+      </View>
       <View
         style={[
           styles.txPanel,
@@ -240,7 +233,12 @@ export default function HomeScreen() {
           </Pressable>
         </View>
 
-        {recent.length === 0 ? (
+        {loading && !data ? (
+          <View style={{ gap: 12, paddingVertical: 8 }}>
+            <Skeleton height={64} radius={16} />
+            <Skeleton height={64} radius={16} />
+          </View>
+        ) : recent.length === 0 ? (
           <View style={styles.emptyWrap}>
             <View style={styles.emptyIcon}>
               <Ionicons name="receipt-outline" size={28} color={Brand.orange} />

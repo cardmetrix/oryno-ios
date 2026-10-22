@@ -1,4 +1,4 @@
-import type { NativeStackNavigationOptions } from '@react-navigation/native-stack';
+import type { NativeStackNavigationOptions } from 'expo-router/native-stack';
 
 /**
  * Shared motion presets. Background comes from React Navigation theme

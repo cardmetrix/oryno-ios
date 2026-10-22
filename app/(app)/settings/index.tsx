@@ -20,7 +20,10 @@ import { Brand, Radius } from '@/constants/theme';
 import { usePushNotifications } from '@/context/push-notification-context';
 import { useAppTheme } from '@/context/theme-context';
 import { alert } from '@/lib/alert';
-import { api } from '@/lib/api';
+import { ApiError, api } from '@/lib/api';
+import { writeBiometricPref } from '@/lib/biometric';
+import { clearBiometricLogin } from '@/lib/biometric-login';
+import { clerkErrorMessage } from '@/lib/clerk-errors';
 import { endpoints } from '@/lib/endpoints';
 import { registerPushToken, setAppBadge } from '@/lib/push-notifications';
 import { toast } from '@/lib/toast';
@@ -50,6 +53,7 @@ export default function SettingsScreen() {
   const [data, setData] = useState<SettingsPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -100,6 +104,44 @@ export default function SettingsScreen() {
       await load();
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function deleteAccount() {
+    if (!user || deleting) return;
+    if (user.deleteSelfEnabled === false) {
+      alert.error(
+        'Deletion unavailable',
+        'Turn on “Users can delete their account” in the Clerk dashboard, then try again.',
+      );
+      return;
+    }
+
+    setDeleting(true);
+    try {
+      await clearPushRegistration().catch(() => null);
+      await clearBiometricLogin();
+      if (user.id) await writeBiometricPref(user.id, false);
+
+      try {
+        await api.delete(endpoints.auth.account);
+      } catch (error) {
+        const missing =
+          error instanceof ApiError && (error.status === 404 || error.status === 405);
+        if (!missing) throw error;
+      }
+
+      await user.delete();
+      await signOut().catch(() => null);
+      router.replace('/(auth)/onboarding');
+    } catch (error) {
+      const message =
+        error instanceof ApiError
+          ? error.message
+          : clerkErrorMessage(error, 'Could not delete your account. Try again.');
+      alert.error('Could not delete account', message);
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -277,6 +319,7 @@ export default function SettingsScreen() {
       <Animated.View entering={FadeInDown.delay(160).duration(280)} style={{ marginBottom: 8 }}>
         <Pressable
           style={styles.signOutBtn}
+          disabled={deleting}
           onPress={() => {
             alert.confirm('Sign out?', 'You can sign back in anytime.', {
               confirmLabel: 'Sign Out',
@@ -294,6 +337,29 @@ export default function SettingsScreen() {
           }}>
           <Ionicons name="log-out-outline" size={18} color={Brand.error} />
           <Text style={styles.signOutText}>Sign out</Text>
+        </Pressable>
+        <Pressable
+          style={[styles.deleteBtn, deleting && { opacity: 0.6 }]}
+          disabled={deleting}
+          onPress={() => {
+            alert.confirm(
+              'Delete your account?',
+              'This permanently deletes your ORYNO sign-in and the personal data stored with your account. Wallet history we must keep for legal reasons may remain. This cannot be undone.',
+              {
+                confirmLabel: deleting ? 'Deleting…' : 'Delete Account',
+                destructive: true,
+                onConfirm: () => void deleteAccount(),
+              },
+            );
+          }}>
+          {deleting ? (
+            <ActivityIndicator size="small" color={Brand.error} />
+          ) : (
+            <Ionicons name="trash-outline" size={18} color={Brand.error} />
+          )}
+          <Text style={styles.deleteText}>
+            {deleting ? 'Deleting account…' : 'Delete Account'}
+          </Text>
         </Pressable>
         {saving ? (
           <View style={styles.savingRow}>
@@ -509,6 +575,19 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   signOutText: { color: Brand.error, fontSize: 14, fontWeight: '800' },
+  deleteBtn: {
+    marginTop: 10,
+    height: 44,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(255,59,48,0.35)',
+    backgroundColor: Brand.white,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  deleteText: { color: Brand.error, fontSize: 14, fontWeight: '800' },
   savingRow: {
     marginTop: 10,
     flexDirection: 'row',

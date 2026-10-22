@@ -101,7 +101,7 @@ function TwoFactorChallenge({
 function makeStyles(colors: ThemeColors) {
   return StyleSheet.create({
     root: {
-      ...StyleSheet.absoluteFillObject,
+      ...StyleSheet.absoluteFill,
       zIndex: 90,
       elevation: 90,
       backgroundColor: colors.background,

@@ -1,7 +1,7 @@
 import { API_BASE_URL, API_PREFIX, PREFER_EXTERNAL_API } from '@/lib/config';
 
 const LOG_PREFIX = '[ORYNO API]';
-const MAX_CONCURRENT = 2;
+const MAX_CONCURRENT = 6;
 const NETWORK_RETRIES = 2;
 const TOKEN_CACHE_MS = 8_000;
 

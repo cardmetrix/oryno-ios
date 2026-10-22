@@ -108,7 +108,7 @@ export function AppLockOverlay() {
 function makeStyles(colors: ThemeColors) {
   return StyleSheet.create({
     root: {
-      ...StyleSheet.absoluteFillObject,
+      ...StyleSheet.absoluteFill,
       zIndex: 80,
       elevation: 80,
     },

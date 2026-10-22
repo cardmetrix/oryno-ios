@@ -7,7 +7,7 @@ export default function SplashScreen() {
   useEffect(() => {
     const t = setTimeout(() => {
       router.replace('/(auth)/onboarding');
-    }, 1200);
+    }, 0);
     return () => clearTimeout(t);
   }, []);
 

@@ -8,10 +8,7 @@ import {
 } from '@/constants/transitions';
 import { useAppTheme } from '@/context/theme-context';
 
-/**
- * Signed-in shell. Session/wallet bootstrap is owned by BootGate so the splash
- * stays up until the dashboard is ready (no dark blank gap).
- */
+/** Signed-in shell. Dashboard data loads in the background. */
 export default function AppLayout() {
   const { isSignedIn, isLoaded } = useAuth();
   const { colors } = useAppTheme();

@@ -85,7 +85,7 @@ export const TERMS_OF_SERVICE: {
     {
       heading: '10. Suspension & termination',
       paragraphs: [
-        'We may suspend or close accounts that violate these Terms, present fraud or security risk, or are used in a way that harms other users or our partners. You may stop using ORYNO at any time and may ask support to close your account.',
+        'We may suspend or close accounts that violate these Terms, present fraud or security risk, or are used in a way that harms other users or our partners. You may stop using ORYNO at any time. You can permanently delete your account and the personal data stored with it from Settings → Delete Account.',
         'Because we do not offer general bank withdrawals, a remaining balance stays available for Services until the account is closed. On closure we will, where the law requires a return of funds, tell you how any unused balance will be handled.',
       ],
     },
@@ -173,7 +173,7 @@ export const PRIVACY_POLICY: {
     {
       heading: '7. Your choices',
       paragraphs: [
-        'You can update profile details and notification preferences in Settings, join or leave product waitlists, and ask support to close your account. Subject to local law, you may also request access to, correction of, or deletion of personal data. We may keep records we are legally required to retain.',
+        'You can update profile details and notification preferences in Settings, and join or leave product waitlists. To permanently delete your account and the personal data stored with it, open Settings and tap Delete Account. We may keep records we are legally required to retain, such as transaction records needed for fraud prevention or tax.',
       ],
     },
     {

@@ -1,4 +1,4 @@
-import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
+import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { DynamicColorIOS } from 'react-native';
 
 import { Brand } from '@/constants/theme';
@@ -26,24 +26,24 @@ export default function TabLayout() {
       minimizeBehavior="automatic"
       disableTransparentOnScrollEdge={false}>
       <NativeTabs.Trigger name="index">
-        <Label>Home</Label>
-        <Icon sf={{ default: 'house', selected: 'house.fill' }} />
+        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf={{ default: 'house', selected: 'house.fill' }} />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="cards">
-        <Label>Cards</Label>
-        <Icon sf={{ default: 'creditcard', selected: 'creditcard.fill' }} />
+        <NativeTabs.Trigger.Label>Cards</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf={{ default: 'creditcard', selected: 'creditcard.fill' }} />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="services">
-        <Label>Services</Label>
-        <Icon sf={{ default: 'square.grid.2x2', selected: 'square.grid.2x2.fill' }} />
+        <NativeTabs.Trigger.Label>Services</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf={{ default: 'square.grid.2x2', selected: 'square.grid.2x2.fill' }} />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="history">
-        <Label>History</Label>
-        <Icon sf={{ default: 'clock', selected: 'clock.fill' }} />
+        <NativeTabs.Trigger.Label>History</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf={{ default: 'clock', selected: 'clock.fill' }} />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="profile">
-        <Label>Profile</Label>
-        <Icon sf={{ default: 'person', selected: 'person.fill' }} />
+        <NativeTabs.Trigger.Label>Profile</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf={{ default: 'person', selected: 'person.fill' }} />
       </NativeTabs.Trigger>
     </NativeTabs>
   );
